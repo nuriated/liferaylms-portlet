@@ -189,7 +189,8 @@ public class GradeBook extends MVCPortlet {
 			PortletException {
 		String action = ParamUtil.getString(resourceRequest, "action");
 		long moduleId = ParamUtil.getLong(resourceRequest, "moduleId",0);
-		long teamId=ParamUtil.getLong(resourceRequest, "teamId",0);
+		//long teamId=ParamUtil.getLong(resourceRequest, "teamId",0);
+		long teamId=ParamUtil.getLong(resourceRequest, "team",0);
 		ThemeDisplay themeDisplay  =(ThemeDisplay)resourceRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		if(action.equals("export")){
 			
@@ -197,7 +198,7 @@ public class GradeBook extends MVCPortlet {
 				Team theTeam=null;
 				java.util.List<Team> userTeams=TeamLocalServiceUtil.getUserTeams(themeDisplay.getUserId(), themeDisplay.getScopeGroupId());
 				if(teamId>0 && (TeamLocalServiceUtil.hasUserTeam(themeDisplay.getUserId(), teamId)||userTeams.size()==0))
-				{		
+				{	
 					theTeam=TeamLocalServiceUtil.fetchTeam(teamId);	
 				}
 				Module module = ModuleLocalServiceUtil.getModule(moduleId);
@@ -248,7 +249,7 @@ public class GradeBook extends MVCPortlet {
 				}
 				
 				userParams.put("usersGroups", course.getGroupCreatedId());
-					
+									
 					userParams.put("notInCourseRoleTeach", new CustomSQLParam("WHERE User_.userId NOT IN "
 				              + " (SELECT UserGroupRole.userId " + "  FROM UserGroupRole "
 				              + "  WHERE  (UserGroupRole.groupId = ?) AND (UserGroupRole.roleId = ?))", new Long[] {
