@@ -1,13 +1,27 @@
 <liferay-portlet:actionURL name="removeAll" var="removeAllURL">
-		<portlet:param name="view" value="role-members-tab" /> 
-		<liferay-portlet:param name="courseId" value="${courseId}"></liferay-portlet:param>
-		<liferay-portlet:param name="roleId" value="${roleId}"></liferay-portlet:param>
-		<liferay-portlet:param name="tabs1" value="${tab}"></liferay-portlet:param>
-		<portlet:param name="backToEdit" value="${backToEdit}" />
-		<c:if test="${backToEdit}">
-			<portlet:param name="redirectOfEdit" value="${redirectOfEdit}"/>
-		</c:if>
-	</liferay-portlet:actionURL>
+	<portlet:param name="view" value="role-members-tab" /> 
+	<liferay-portlet:param name="courseId" value="${courseId}"></liferay-portlet:param>
+	<liferay-portlet:param name="roleId" value="${roleId}"></liferay-portlet:param>
+	<liferay-portlet:param name="tabs1" value="${tab}"></liferay-portlet:param>
+	<portlet:param name="backToEdit" value="${backToEdit}" />
+	<c:if test="${backToEdit}">
+		<portlet:param name="redirectOfEdit" value="${redirectOfEdit}"/>
+	</c:if>
+</liferay-portlet:actionURL>
+	
+	
+	
+<liferay-portlet:renderURL var="backFromImportURL">
+	<portlet:param name="view" value="role-members-tab" /> 
+	<liferay-portlet:param name="courseId" value="${courseId}"></liferay-portlet:param>
+	<liferay-portlet:param name="roleId" value="${roleId}"></liferay-portlet:param>
+	<liferay-portlet:param name="tabs1" value="${tab}"></liferay-portlet:param>
+	<portlet:param name="backToEdit" value="${backToEdit}" />
+	<c:if test="${backToEdit}">
+		<portlet:param name="redirectOfEdit" value="${redirectOfEdit}"/>
+	</c:if>
+</liferay-portlet:renderURL>	
+	
 	
 
 <script type="text/javascript">
@@ -52,7 +66,7 @@
 	<div>
 		<liferay-portlet:resourceURL var="exportURL" >
 			<portlet:param name="action" value="export"/>
-			<portlet:param name="groupId" value="${createdGroupId}"/>
+			<portlet:param name="courseId" value="${courseId}"/>
 			<portlet:param name="roleId" value="${roleId}"/>
 		</liferay-portlet:resourceURL>
 		<liferay-ui:icon 
@@ -102,11 +116,12 @@
 	            centered: true,
 	            resizable: true,
 	            width: 700,
-	            height: 530,
+	            height: 650,
 	            destroyOnClose: false,
 	            after: {   
 		          	close: function(event){
-		          		Liferay.Portlet.refresh(A.one('#p_p_id<portlet:namespace />'),{'p_t_lifecycle':0});
+		          		window.location.href= '${backFromImportURL}';
+		          		//Liferay.Portlet.refresh(A.one('#p_p_id<portlet:namespace />'),{'p_t_lifecycle':0});
 	            	}
 	            }
 	        }).plug(A.Plugin.IO, {

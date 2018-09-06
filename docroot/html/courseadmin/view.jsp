@@ -47,7 +47,7 @@
 			Group groupsel= GroupLocalServiceUtil.getGroup(course.getGroupCreatedId());
 			Layout initCourseLayout = LayoutLocalServiceUtil.fetchFirstLayout(course.getGroupCreatedId(), false, 0);
 			%>
-			<liferay-ui:search-container-column-text name="course">
+			<liferay-ui:search-container-column-text name="course" orderable="true" orderableProperty="title">
 				<c:choose>
 					<c:when test="<%= !course.isClosed()  && permissionChecker.hasPermission(course.getGroupCreatedId(),  Course.class.getName(),course.getCourseId(),ActionKeys.VIEW) %>">
 						<a href='<%=themeDisplay.getPortalURL() +"/"+ themeDisplay.getLocale().getLanguage() +"/web"+ groupsel.getFriendlyURL()%>'><%=course.getTitle(themeDisplay.getLocale()) %></a>
@@ -58,8 +58,8 @@
 				</c:choose>
 			</liferay-ui:search-container-column-text>
 			
-			<c:if test="${not empty expandoColumnNames}">
-				<c:forEach items="${expandoColumnNames}" var="expName">
+			<c:if test="${not empty expandoNames}">
+				<c:forEach items="${expandoNames}" var="expName">
 					<liferay-ui:search-container-column-text name="${expName.getDisplayName(themeDisplay.locale)}">
 						<liferay-ui:custom-attribute classPK="${course.courseId}" name="${expName.name}" 
 									className="<%= Course.class.getName() %>" editable="false" label="false" >
@@ -83,6 +83,11 @@
 				    <c:if test="<%=groupsel.getType() == GroupConstants.TYPE_SITE_RESTRICTED  %>">
 						<liferay-ui:message key="restricted" />
 					</c:if>     			
+				</liferay-ui:search-container-column-text>
+			</c:if>
+			<c:if test="${renderRequest.preferences.getValue('createDateColumn', 'false')}">
+				<liferay-ui:search-container-column-text name="create-date" orderable="true" orderableProperty="createDate">
+					<%=dateFormatDateTime.format(course.getCreateDate()) %>
 				</liferay-ui:search-container-column-text>
 			</c:if>
 			<%

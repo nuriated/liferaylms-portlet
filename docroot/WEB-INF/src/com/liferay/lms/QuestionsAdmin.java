@@ -76,6 +76,7 @@ public class QuestionsAdmin extends MVCPortlet{
 	
 	HashMap<Long, TestAnswer> answersMap = new HashMap<Long, TestAnswer>(); 
 	
+	
 	@SuppressWarnings("unchecked")
 	public void moveQuestion(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 		
@@ -173,14 +174,23 @@ public class QuestionsAdmin extends MVCPortlet{
 		long actid = ParamUtil.getLong(actionRequest, "resId");
 		long questionType = ParamUtil.getLong(actionRequest, "typeId", -1);
 		String questionText = ParamUtil.get(actionRequest, "text", "");
-		boolean penalize = ParamUtil.getBoolean(actionRequest, "penalize");
+		
+		boolean penalize = false;
+		String partialCorrection = StringPool.BLANK;
+		
+		penalize = ParamUtil.getBoolean(actionRequest, "penalize");
+		log.debug("***penalize:"+penalize);
+		partialCorrection = ParamUtil.getString(actionRequest, "partialcorrection", "false");
+		if(Boolean.parseBoolean(partialCorrection)){
+			penalize = false;
+		}
+		
 		
 		log.debug("***questionId:"+questionId);
 		log.debug("***penalize:"+penalize);
 		
 		String backUrl = ParamUtil.get(actionRequest, "backUrl", "");
 		String formatType = ParamUtil.getString(actionRequest, "formattype", PropsUtil.get("lms.question.formattype.normal")); 
-		String partialCorrection = ParamUtil.getString(actionRequest, "partialcorrection", "false");
 		Document document = null;
 		Element rootElement = null;
 		

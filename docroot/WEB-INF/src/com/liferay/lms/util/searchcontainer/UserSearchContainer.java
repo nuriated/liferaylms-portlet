@@ -1,7 +1,6 @@
 package com.liferay.lms.util.searchcontainer;
 
 import com.liferay.lms.util.displayterms.UserDisplayTerms;
-import com.liferay.lms.util.searchterms.UserSearchTerms;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -47,28 +46,36 @@ public class UserSearchContainer extends SearchContainer<User> {
 	public UserSearchContainer(PortletRequest portletRequest, PortletURL iteratorURL) {
 		this(portletRequest, DEFAULT_CUR_PARAM, iteratorURL);
 	}
+	
+	public UserSearchContainer(PortletRequest portletRequest, PortletURL iteratorURL, UserDisplayTerms displayTerms) {
+		this(portletRequest, DEFAULT_CUR_PARAM, iteratorURL, displayTerms);
+	}
+	
+	public UserSearchContainer(
+			PortletRequest portletRequest, String curParam,
+			PortletURL iteratorURL) {
+
+			this(portletRequest, curParam, iteratorURL, new UserDisplayTerms(portletRequest));
+			
+		}
 
 	public UserSearchContainer(
 		PortletRequest portletRequest, String curParam,
-		PortletURL iteratorURL) {
+		PortletURL iteratorURL, UserDisplayTerms displayTerms) {
 
 		super(
-			portletRequest, new UserDisplayTerms(portletRequest),
-			new UserSearchTerms(portletRequest), curParam, DEFAULT_DELTA,
+			portletRequest, displayTerms,
+			null, curParam, DEFAULT_DELTA,
 			iteratorURL, headerNames, EMPTY_RESULTS_MESSAGE);
 
 		PortletConfig portletConfig =
 			(PortletConfig)portletRequest.getAttribute(
 				JavaConstants.JAVAX_PORTLET_CONFIG);
 
-		UserDisplayTerms displayTerms = (UserDisplayTerms)getDisplayTerms();
-		UserSearchTerms searchTerms = (UserSearchTerms)getSearchTerms();
-
 		String portletName = portletConfig.getPortletName();
 
 		if (!portletName.equals(PortletKeys.USERS_ADMIN)) {
 			displayTerms.setStatus(WorkflowConstants.STATUS_APPROVED);
-			searchTerms.setStatus(WorkflowConstants.STATUS_APPROVED);
 		}
 
 

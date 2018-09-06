@@ -1,3 +1,5 @@
+<%@page import="com.liferay.lms.learningactivity.SurveyLearningActivityType"%>
+<%@page import="com.liferay.lms.SurveyActivity"%>
 <%@page import="com.liferay.portal.kernel.util.ListUtil"%>
 <%@page import="com.liferay.portal.kernel.util.PropsUtil"%>
 <%@page import="com.liferay.portal.kernel.servlet.SessionErrors"%>
@@ -109,23 +111,8 @@
 	<%
 			}
 		}
-		if(qt.isPartialCorrectAvailable()){
-			boolean partialCorrection = false;
-			try{
-				Document document = SAXReaderUtil.read(question.getExtracontent());
-				Element rootElement = document.getRootElement();
-				partialCorrection = StringPool.TRUE.equals(rootElement.element("partialcorrection").getData());
-			}catch(NullPointerException e){
-				partialCorrection = false;
-			}catch(DocumentException e){
-				partialCorrection = false;
-			}
 	%>
-			<aui:input type="checkbox" label="execactivity.editquestions.partialcorrection" helpMessage="execactivity.editquestions.partialcorrection.helpmessage" name="partialcorrection" 
-					checked="<%=partialCorrection %>" last="true" inlineLabel="true" inlineField="true"/>
-	<%
-		}
-	%>
+
 	<aui:field-wrapper label="">
 		<div id="<portlet:namespace />questionError" class="aui-helper-hidden portlet-msg-error">
 			<liferay-ui:message key="execactivity.editquestions.newquestion.error.text.required"/>
@@ -153,10 +140,59 @@
 			    </script>
 	    </aui:field-wrapper>
 	    
-	    <c:if test="<%=qt.getPenalize() %>">
-	   		<aui:input name="penalize" label="question.penalize" type="checkbox" checked="<%=question!=null?question.isPenalize():false%>"/>
-	    </c:if>
+	    <%
+	    boolean partialCorrection = false;
+		if(qt.isPartialCorrectAvailable()){
+			
+			try{
+				Document document = SAXReaderUtil.read(question.getExtracontent());
+				Element rootElement = document.getRootElement();
+				partialCorrection = StringPool.TRUE.equals(rootElement.element("partialcorrection").getData());
+			}catch(NullPointerException e){
+				partialCorrection = false;
+			}catch(DocumentException e){
+				partialCorrection = false;
+			}
+		%>
+				<aui:input type="checkbox" label="execactivity.editquestions.partialcorrection" helpMessage="execactivity.editquestions.partialcorrection.helpmessage" name="partialcorrection" 
+						checked="<%=partialCorrection %>" last="true" inlineLabel="true" inlineField="true" onChange="javascript:${renderResponse.getNamespace()}changePartialCorrection(this.checked)"/>
+						
+			   <script type="text/javascript">
+					function <portlet:namespace/>changePartialCorrection(value){
+						if($('#<portlet:namespace/>penalizeCheckbox')!=null){
+							if(value){
+								$('#<portlet:namespace/>penalizeCheckbox').prop('checked', false); 
+								$('#<portlet:namespace/>penalizeCheckbox').prop('disabled', true);
+									
+							}else{
+								$('#<portlet:namespace/>penalizeCheckbox').prop('disabled', false);
+							}
+						}
+					}
+				</script>
+				
+		<%
+			}
+		
+		if(qt.isPartialCorrectAvailable() && question!=null && !(question.isPenalize()&&!partialCorrection)){		%>
+			<script type="text/javascript">
+				AUI().ready('aui-base',
+				   	function() {
+						$('#<portlet:namespace/>penalizeCheckbox').prop('checked', false); 
+						$('#<portlet:namespace/>penalizeCheckbox').prop('disabled', true);
+				   	}
+				);
+			</script>
+			
+		<%
+		}
+			
+			
+		%>
 	    
+	    <c:if test="<%=qt.getPenalize() && (learningActivity.getTypeId() != SurveyLearningActivityType.TYPE_ID)%>">
+		    	<aui:input name="penalize" label="question.penalize" type="checkbox" disabled="<%=partialCorrection%>" checked="<%=question!=null?(question.isPenalize()&&!partialCorrection):false%>"/>
+	    </c:if>
 	</aui:field-wrapper>
 	
 	<portlet:renderURL var="viewAnswerURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">   
